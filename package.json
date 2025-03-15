@@ -1,0 +1,17 @@
+{
+  "name": "netherlands-working-holidays",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "puppeteer": "^24.4.0",
+    "puppeteer-real-browser": "^1.4.2"
+  }
+}

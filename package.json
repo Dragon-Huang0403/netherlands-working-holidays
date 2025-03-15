@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "puppeteer": "^24.4.0",
-    "puppeteer-real-browser": "^1.4.2"
+    "puppeteer-real-browser": "^1.4.2",
+    "uuid": "^11.1.0"
   }
 }

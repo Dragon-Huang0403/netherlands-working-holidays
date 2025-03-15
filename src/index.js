@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const { v4: uuidv4 } = require('uuid');
 const { connect } = require('puppeteer-real-browser');
 
 console.log('>>> process.env.GIVEN_NAME', process.env.GIVEN_NAME);
@@ -7,11 +8,12 @@ console.log('>>> process.env.SURNAME', process.env.SURNAME);
 console.log('>>> process.env.CONTACT_NUMBER', process.env.CONTACT_NUMBER);
 console.log('>>> process.env.EMAIL', process.env.EMAIL);
 
-const DEFAULT_TIMEOUT = 10_000;
+const DEFAULT_TIMEOUT = 30_000;
 
 async function main() {
   let browser;
   let page;
+  const id = uuidv4();
   try {
     const result = await connect({
       headless: false,
@@ -113,16 +115,35 @@ async function main() {
 
       page.on('dialog', async (dialog) => {
         console.log(`Confirm detected: ${dialog.message()}`);
-        // await dialog.accept();
-        await dialog.dismiss();
+        await dialog.accept();
       });
 
       await availableTime.click();
     }
+
+    /**
+     * Step 5: Get the table data
+     */
+    await page.waitForNavigation();
+    await page.screenshot({ path: `./result-${id}.png` });
+
+    const tableData = await page.evaluate(() => {
+      const table = document.querySelector('#dgApplett');
+      if (!table) return [];
+
+      const rows = Array.from(table.querySelectorAll('tr'));
+      return rows.map((row) => {
+        return Array.from(row.querySelectorAll('td')).map((cell) =>
+          cell.innerText.trim()
+        );
+      });
+    });
+    console.log('Extracted Table Data:');
+    console.table(tableData);
   } catch (error) {
     console.error(error);
   } finally {
-    await browser.close();
+    // await browser.close();
   }
 }
 
@@ -130,4 +151,4 @@ async function runManyTimes(n) {
   await Promise.all(Array(n).fill(0).map(main));
 }
 
-runManyTimes(3);
+runManyTimes(1);

@@ -10,6 +10,19 @@ console.log('>>> process.env.EMAIL', process.env.EMAIL);
 
 const DEFAULT_TIMEOUT = 30_000;
 
+async function waitUntil(time) {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      console.log('>>> now', now);
+      if (now.getTime() >= time.getTime()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 100);
+  });
+}
+
 async function main() {
   let browser;
   let page;
@@ -45,6 +58,8 @@ async function main() {
     );
     await page.waitForNavigation();
 
+    await waitUntil(new Date('2025-04-01 14:30:00'));
+
     /**
      * Step 0: Make an appointment
      */
@@ -61,7 +76,7 @@ async function main() {
     {
       await page.select(
         '::-p-aria(-Select-) >>>> ::-p-aria([role=\\"combobox\\"])',
-        '901' // 923 = working holiday program
+        '923' // 923 = working holiday program
       );
       await page.locator('#plhMain_btnSubmit').click();
       await page.waitForNavigation();

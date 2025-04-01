@@ -23,7 +23,7 @@ async function waitUntil(time) {
   });
 }
 
-async function main() {
+async function main({ time }) {
   let browser;
   let page;
   const id = uuidv4();
@@ -58,7 +58,7 @@ async function main() {
     );
     await page.waitForNavigation();
 
-    await waitUntil(new Date('2025-04-01 14:30:00'));
+    await waitUntil(time);
 
     /**
      * Step 0: Make an appointment
@@ -163,7 +163,13 @@ async function main() {
 }
 
 async function runManyTimes(n) {
-  await Promise.all(Array(n).fill(0).map(main));
+  const promises = [];
+  for (let i = 0; i < n; i++) {
+    promises.push(main({ time: new Date('2025-04-01 14:30:00') }));
+    promises.push(main({ time: new Date('2025-04-01 14:30:01') }));
+  }
+
+  await Promise.all(promises);
 }
 
-runManyTimes(1);
+runManyTimes(3);
